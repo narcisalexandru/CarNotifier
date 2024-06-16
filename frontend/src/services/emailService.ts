@@ -1,18 +1,27 @@
 import axios from 'axios';
 
 const apiClient = axios.create({
-  baseURL: 'https://localhost:7254/api',
-  withCredentials: false,
-  headers: {
-    'Content-Type': 'application/json'
-  }
+    baseURL: 'https://localhost:64424/api',
+    withCredentials: false,
+    headers: {
+        'Content-Type': 'application/json',
+    },
 });
 
-export default {
-  getRegistrations() {
-    return apiClient.get('/registration');
-  },
-  registerCar(registration: any) {
-    return apiClient.post('/registration', registration);
-  }
+interface CarData {
+    fullName: string;
+    email: string;
+    licensePlate: string;
+    service: string;
+    expiryDate: string | null;
+}
+
+export const registerCar = async (carData: CarData) => {
+    try {
+        const response = await apiClient.post('/registration', carData);
+        return response.data;
+    } catch (error) {
+        console.error('Error registering car: ', error);
+        throw error;
+    }
 };

@@ -13,9 +13,9 @@ import Dropdown from 'primevue/dropdown';
 import InputText from 'primevue/inputtext';
 import Button from 'primevue/button';
 import Menubar from 'primevue/menubar';
-import Calendar from 'primevue/calendar';
+import CustomCalendar from 'primevue/calendar';
 import RadioButton from 'primevue/radiobutton';
-
+import CustomTextarea from 'primevue/textarea';
 
 const app = createApp(App)
 
@@ -27,8 +27,9 @@ app.component('DropdownInputs', Dropdown);
 app.component('InputText', InputText);
 app.component('ButtonInputs', Button);
 app.component('MenuBar', Menubar);
-app.component('Calendar', Calendar);
 app.component('RadioButton', RadioButton);
+app.component('CustomCalendar', CustomCalendar);
+app.component('CustomTextarea', CustomTextarea);
 
 
 app.mount('#app')

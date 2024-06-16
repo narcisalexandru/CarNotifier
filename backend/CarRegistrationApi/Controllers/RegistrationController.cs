@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using CarRegistrationApi.Models;
 using CarRegistrationApi.Services;
+using CarRegistrationApi.Models;
+using System.Threading.Tasks;
 using CarRegistrationApi.Data;
-using Microsoft.EntityFrameworkCore;
 
 namespace CarRegistrationApi.Controllers
 {
@@ -20,7 +20,7 @@ namespace CarRegistrationApi.Controllers
         }
 
         [HttpPost]
-        public IActionResult Register([FromBody] RegistrationModel registration)
+        public async Task<IActionResult> Register([FromBody] RegistrationModel registration)
         {
             if (registration == null)
             {
@@ -28,25 +28,11 @@ namespace CarRegistrationApi.Controllers
             }
 
             _context.Registrations.Add(registration);
-            try
-            {
-                _context.SaveChanges();
-            }
-            catch (DbUpdateException ex)
-            {
-                return StatusCode(500, $"Eroare internă a serverului: {ex.Message}");
-            }
+            await _context.SaveChangesAsync();
 
-            // Trimite emailul de confirmare cu detaliile înregistrării
             _emailService.SendConfirmationEmail(registration.Email, registration.FullName, registration.LicensePlate, registration.Service, registration.ExpiryDate);
 
-            return Ok(new { message = "Înregistrarea a fost realizată cu succes și emailurile de notificare au fost trimise." });
-        }
-
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<RegistrationModel>>> GetRegistrations()
-        {
-            return await _context.Registrations.ToListAsync();
+            return Ok();
         }
     }
 }

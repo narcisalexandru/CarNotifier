@@ -1,13 +1,11 @@
-using System;
+﻿using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using CarRegistrationApi.Data;
-using CarRegistrationApi.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 
 namespace CarRegistrationApi.Services
 {
@@ -15,41 +13,37 @@ namespace CarRegistrationApi.Services
     {
         private Timer _timer;
         private readonly IServiceScopeFactory _scopeFactory;
-        private readonly ILogger<NotificationService> _logger;
+        private readonly EmailService _emailService;
 
-        public NotificationService(IServiceScopeFactory scopeFactory, ILogger<NotificationService> logger)
+        public NotificationService(IServiceScopeFactory scopeFactory, EmailService emailService)
         {
             _scopeFactory = scopeFactory;
-            _logger = logger;
+            _emailService = emailService;
         }
 
         public Task StartAsync(CancellationToken cancellationToken)
         {
-            _timer = new Timer(DoWork, null, TimeSpan.Zero, TimeSpan.FromHours(24));
+            // Rulează la fiecare oră
+            _timer = new Timer(DoWork, null, TimeSpan.Zero, TimeSpan.FromHours(1));
             return Task.CompletedTask;
         }
 
-        private async void DoWork(object state)
+        private void DoWork(object? state)
         {
             using (var scope = _scopeFactory.CreateScope())
             {
-                var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-                var emailService = scope.ServiceProvider.GetRequiredService<EmailService>();
-
-                var now = DateTime.UtcNow;
-                var registrations = await context.Registrations
-                    .Where(r => r.ExpiryDate != null &&
-                                r.ExpiryDate.Date == now.Date.AddDays(1) &&
-                                !r.IsNotificationSent)
-                    .ToListAsync();
+                var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+                var registrations = dbContext.Registrations
+                    .Where(r => r.ExpiryDate.Date == DateTime.UtcNow.AddDays(1).Date && !r.IsNotificationSent)
+                    .ToList();
 
                 foreach (var registration in registrations)
                 {
-                    emailService.SendReminderEmail(registration.Email, registration.FullName, registration.Service);
+                    _emailService.SendReminderEmail(registration.Email, registration.FullName, registration.Service, registration.ExpiryDate);
                     registration.IsNotificationSent = true;
                 }
 
-                await context.SaveChangesAsync();
+                dbContext.SaveChanges();
             }
         }
 

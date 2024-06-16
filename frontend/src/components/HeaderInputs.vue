@@ -49,7 +49,7 @@
         <div class="flex ml-8">
           <div class="flex flex-column gap-2">
             <label class="text-white" for="date"> Cand expira ? </label>
-            <Calendar v-model="date" @change="updateExpiryDate" />
+            <CustomCalendar v-model="date" @change="updateExpiryDate" />
           </div>
         </div>
       </div>
@@ -62,7 +62,7 @@
           label="ÎNREGISTREAZĂ MASINA" 
           icon="pi pi-bell" 
           :loading="loading" 
-          @click="registerCar"
+          @click="submitRegistration"
         />
       </div>
     </div>
@@ -71,7 +71,7 @@
 
 <script setup lang="ts">
 import { ref, watch } from "vue";
-import apiService from '../services/emailService';
+import { registerCar as apiRegisterCar } from '@/services/emailService';
 import moment from 'moment-timezone';
 
 const selectedService = ref();
@@ -110,20 +110,20 @@ watch(date, (newDate) => {
 const updateExpiryDate = (value: Date) => {
   console.log("Original Date selected:", value);
   // Convert the date from MM/DD/YYYY format to YYYY-MM-DD format and adjust for Bucharest timezone
-  const parsedDate = moment(value, "MM/DD/YYYY").tz("Europe/Bucharest").startOf('day').format('YYYY-MM-DD');
+  const parsedDate = moment(value).tz("Europe/Bucharest").startOf('day').format('YYYY-MM-DD');
   console.log("Converted to Bucharest timezone and format:", parsedDate);
   registration.value.expiryDate = parsedDate;
   console.log("Expiry Date set in registration object:", registration.value.expiryDate);
 };
 
-const registerCar = async () => {
+const submitRegistration = async () => {
   loading.value = true;
   try {
     if (selectedService.value) {
       registration.value.service = selectedService.value.name;
     }
     console.log("Registration data being sent:", registration.value); // Log the data being sent
-    await apiService.registerCar(registration.value);
+    await apiRegisterCar(registration.value);
     alert('Registration successful and notification emails sent.');
   } catch (error) {
     console.error('Error registering car:', error);
