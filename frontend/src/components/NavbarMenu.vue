@@ -1,6 +1,12 @@
 <template>
     <div class="card">
-        <MenuBar class="w-full flex justify-content-end border-none border-noround" :model="items" />
+        <MenuBar class="w-full flex justify-content-between px-4 border-none border-noround fixed" :model="items">
+            <template #start>
+                    <router-link to="/">
+                        <img class="align-items-start justify-content-start w-2 h-2" src="@/assets/images/logo.jpeg" alt="logo" />
+                    </router-link>
+            </template>
+        </MenuBar>
     </div>
 </template>
 
@@ -18,10 +24,16 @@ const items = ref([
     {
         label: 'Despre noi',
         icon: 'pi pi-users',
+        command: () => {
+            router.push('/despre-noi');
+        }
     },
     {
         label: 'Intrebari frecvente',
         icon: 'pi pi-question-circle',
+        command: () => {
+            router.push('/intrebari-frecvente');
+        }
     },
     {
         label: 'Contact',

@@ -1,5 +1,5 @@
 <template>
-    <div class="card flex align-items-center justify-content-center w-full bg-cover image" style="height: 1000px;">
+    <div class="flex align-items-center justify-content-center w-full bg-cover image h-screen" style="height: 1000px;">
         <HeaderInputs />
     </div>
 </template>

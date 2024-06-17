@@ -1,6 +1,6 @@
 <template>
-    <div class="flex justify-content-center align-items-center p-8">
-        <div class="flex flex-column gap-3 blur-box p-8 border border-round ">
+    <div class="flex justify-content-center align-items-center p-8 h-screen">
+        <div class="flex flex-column mt-8 gap-3 blur-box p-8 border border-round ">
             <h1 class=" text-center text-3xl text-white">Contacteaza-ne</h1>
             <div class="flex flex-column text-white gap-1">
                 <label for="username">Nume Prenume</label>
@@ -16,20 +16,45 @@
             </div>
             <div class="flex flex-column text-white gap-1">
                 <label for="message">Ajutor si suport</label>
-                <CustomTextarea v-model="message" rows="5" cols="30" />
+                <CustomTextarea id="message" v-model="message" rows="5" cols="30" />
             </div>
+            <ButtonInputs
+                class="bg-blue-900 border-transparent"
+                type="button" 
+                label="Trimite"
+                :loading="loading" 
+                @click="submitContactForm"
+        />
         </div>
     </div>
 </template>
 
 <script setup lang="ts">
 import { ref } from 'vue';
+import { sendContactMessage } from '@/services/contactService';
 
-const username = ref(null);
-const email = ref(null);
-const message = ref('');
+const username = ref('');
+const email = ref('');
 const subject = ref('');
+const message = ref('');
+const loading = ref(false);
 
+const submitContactForm = async () => {
+    try {
+        const contactData = {
+            fullName: username.value,
+            email: email.value,
+            subject: subject.value,
+            message: message.value,
+        };
+
+        await sendContactMessage(contactData);
+        alert('Mesaj trimis cu succes!');
+    } catch (error) {
+        console.error('Error sending contact message:', error);
+        alert('Eroare la trimiterea mesajului. Te rugăm să încerci din nou.');
+    }
+};
 </script>
 
 <style>

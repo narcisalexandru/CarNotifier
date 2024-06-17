@@ -16,6 +16,7 @@ import Menubar from 'primevue/menubar';
 import CustomCalendar from 'primevue/calendar';
 import RadioButton from 'primevue/radiobutton';
 import CustomTextarea from 'primevue/textarea';
+import CustomPanel from 'primevue/panel';
 
 const app = createApp(App)
 
@@ -30,6 +31,6 @@ app.component('MenuBar', Menubar);
 app.component('RadioButton', RadioButton);
 app.component('CustomCalendar', CustomCalendar);
 app.component('CustomTextarea', CustomTextarea);
-
+app.component('CustomPanel', CustomPanel);
 
 app.mount('#app')
