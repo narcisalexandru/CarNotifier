@@ -32,9 +32,6 @@ mono_crash.*
 .idea/**/shelf
 .idea/**/workspace.xml
 
-# User-specific files (VS Code Mac)
-.vscode/macros.json
-
 # Ignore folder specific to Visual Studio 2019
 .vs/
 
@@ -71,14 +68,8 @@ artifacts/
 bin/
 obj/
 
-# Ignore Node.js modules
-node_modules/
-
 # Ignore log files
 *.log
-
-# Ignore SQLite database files
-*.db
 
 # Ignore sensitive information
 secret.config
